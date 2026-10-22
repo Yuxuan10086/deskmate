@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>同桌 · 产品需求文档 (PRD)</title>
+<style>
+  :root {
+    --bg: #f7f8fa;
+    --card: #ffffff;
+    --ink: #1a1a2e;
+    --ink-soft: #4a5568;
+    --ink-mute: #8b95a7;
+    --line: #e8ecf1;
+    --brand: #4f6df5;
+    --brand-soft: #eef1ff;
+    --accent: #11c29a;
+    --warn: #f5a623;
+    --danger: #ef4444;
+    --radius: 14px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.04);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.7;
+    font-size: 15px;
+  }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 32px 24px 80px; }
+
+  .hero {
+    background: linear-gradient(135deg, #4f6df5 0%, #7c5cff 100%);
+    color: #fff;
+    border-radius: 20px;
+    padding: 48px 40px;
+    margin-bottom: 32px;
+    box-shadow: var(--shadow);
+  }
+  .hero .tag {
+    display: inline-block;
+    background: rgba(255,255,255,0.18);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    margin-bottom: 16px;
+  }
+  .hero h1 { margin: 0 0 8px; font-size: 34px; font-weight: 700; letter-spacing: -0.5px; }
+  .hero p { margin: 0; opacity: 0.9; font-size: 16px; }
+  .meta { margin-top: 20px; display: flex; gap: 24px; flex-wrap: wrap; font-size: 13px; opacity: 0.85; }
+  .meta span b { font-weight: 600; opacity: 1; }
+
+  .toc {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    margin-bottom: 32px;
+    box-shadow: var(--shadow);
+  }
+  .toc h3 { margin: 0 0 12px; font-size: 14px; color: var(--ink-mute); font-weight: 600; letter-spacing: 1px; }
+  .toc ol { margin: 0; padding-left: 20px; columns: 2; column-gap: 40px; }
+  .toc li { margin: 4px 0; }
+  .toc a { color: var(--ink-soft); text-decoration: none; }
+  .toc a:hover { color: var(--brand); }
+
+  section { margin-bottom: 40px; }
+  h2 {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0 0 16px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--line);
+    letter-spacing: -0.3px;
+  }
+  h3 { font-size: 18px; font-weight: 600; margin: 28px 0 10px; }
+  h4 { font-size: 15px; font-weight: 600; margin: 18px 0 8px; color: var(--ink-soft); }
+  p { margin: 8px 0; color: var(--ink-soft); }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    margin: 14px 0;
+    box-shadow: var(--shadow);
+  }
+  .assumption {
+    background: #fff9ed;
+    border-left: 3px solid var(--warn);
+    padding: 10px 16px;
+    border-radius: 6px;
+    margin: 10px 0;
+    font-size: 14px;
+  }
+  .tbd { color: var(--danger); font-weight: 600; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0;
+    font-size: 14px;
+    background: var(--card);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+  th, td { padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { background: var(--brand-soft); color: var(--ink); font-weight: 600; font-size: 13px; }
+  tr:last-child td { border-bottom: none; }
+  td code, p code { background: var(--brand-soft); color: var(--brand); padding: 1px 6px; border-radius: 4px; font-size: 13px; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 12px; font-weight: 600; }
+  .b-p0 { background: #fde2e2; color: var(--danger); }
+  .b-p1 { background: #fef3c7; color: #b7791f; }
+
+  .demo {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin: 16px 0;
+    box-shadow: var(--shadow);
+  }
+  .demo-title { font-size: 13px; color: var(--ink-mute); margin-bottom: 12px; font-weight: 600; letter-spacing: 0.5px; }
+  .demo-title .frid { color: var(--brand); font-family: monospace; }
+
+  .mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .mode-card {
+    border: 2px solid var(--line);
+    border-radius: 12px;
+    padding: 24px 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+  }
+  .mode-card:hover { border-color: var(--brand); transform: translateY(-2px); }
+  .mode-card.active { border-color: var(--brand); background: var(--brand-soft); }
+  .mode-card .icon { font-size: 36px; margin-bottom: 10px; }
+  .mode-card .name { font-weight: 600; font-size: 16px; }
+  .mode-card .desc { font-size: 13px; color: var(--ink-mute); margin-top: 4px; }
+
+  .subtitle-stage {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    min-height: 200px;
+    position: relative;
+  }
+  .sub-line { color: #fff; font-size: 16px; margin: 4px 0; }
+  .sub-line.cn { color: #a7d8ff; }
+  .sub-line.en { color: #e2e8f0; }
+  .sub-line.live::before { content: "● "; color: var(--accent); animation: blink 1s infinite; }
+  @keyframes blink { 50% { opacity: 0.3; } }
+  .sub-meta { position: absolute; top: 12px; right: 16px; font-size: 12px; color: #8b95a7; }
+  .sub-controls { display: flex; gap: 10px; margin-top: 14px; }
+  .btn {
+    background: var(--brand); color: #fff; border: none; padding: 8px 16px;
+    border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 500;
+  }
+  .btn.ghost { background: transparent; border: 1px solid var(--line); color: var(--ink-soft); }
+
+  .popup {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 20px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+    max-width: 380px;
+  }
+  .popup .ptitle { font-weight: 600; font-size: 15px; display: flex; align-items: center; gap: 8px; }
+  .popup .ptype { background: #fde2e2; color: var(--danger); font-size: 11px; padding: 2px 8px; border-radius: 10px; font-weight: 600; }
+  .popup .pbody { margin: 12px 0; font-size: 14px; color: var(--ink-soft); }
+  .popup .panswer { background: #f0fdf4; border-left: 3px solid var(--accent); padding: 8px 12px; border-radius: 6px; font-size: 13px; }
+  .popup .pactions { display: flex; gap: 8px; margin-top: 14px; }
+
+  .pill { display: inline-block; padding: 3px 10px; background: var(--brand-soft); color: var(--brand); border-radius: 12px; font-size: 12px; font-weight: 500; margin: 2px 4px 2px 0; }
+  .cost-card { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .cost-item { border: 1px solid var(--line); border-radius: 10px; padding: 14px; }
+  .cost-item .ctier { font-weight: 700; font-size: 16px; margin-bottom: 4px; }
+  .cost-item .cprice { font-size: 22px; color: var(--brand); font-weight: 700; }
+  .cost-item .cprice small { font-size: 12px; color: var(--ink-mute); font-weight: 400; }
+  .cost-item ul { margin: 8px 0 0; padding-left: 18px; font-size: 13px; color: var(--ink-soft); }
+
+  .flow { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 13px; }
+  .flow .node { background: var(--brand-soft); color: var(--brand); padding: 4px 10px; border-radius: 8px; font-weight: 500; }
+  .flow .arrow { color: var(--ink-mute); }
+
+  .footer { text-align: center; color: var(--ink-mute); font-size: 13px; margin-top: 60px; padding-top: 20px; border-top: 1px solid var(--line); }
+
+  /* FR-M4 周课程表 */
+  .sch-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .sch-title { flex: 1; text-align: center; font-weight: 600; font-size: 14px; }
+  .sch-grid { display: grid; grid-template-columns: 88px repeat(7, 1fr); gap: 6px; }
+  .sch-head { text-align: center; font-size: 12px; font-weight: 600; color: var(--ink-mute); padding: 4px 0; }
+  .sch-head.today { color: var(--brand); }
+  .sch-time { font-size: 11px; color: var(--ink-mute); text-align: right; padding-right: 8px; display: flex; align-items: center; justify-content: flex-end; line-height: 1.4; }
+  .sch-cell { border-radius: 8px; padding: 6px 8px; min-height: 54px; font-size: 12px; line-height: 1.35; }
+  .sch-cell small { display: block; font-size: 10px; opacity: .85; margin-top: 2px; font-weight: 400; }
+  .sch-cell.has { background: var(--brand); color: #fff; font-weight: 600; cursor: pointer; box-shadow: 0 2px 6px rgba(79,109,245,.35); transition: transform .15s; }
+  .sch-cell.has:hover { transform: translateY(-1px); }
+  .sch-cell.has.today { background: linear-gradient(135deg, #4f6df5, #7c5cff); }
+  .sch-cell.none { background: #f1f3f7; color: #aab2c0; border: 1px dashed #d4dae3; }
+  .sch-cell.empty { background: transparent; }
+  .sch-legend { display: flex; gap: 18px; flex-wrap: wrap; margin-top: 12px; font-size: 12px; color: var(--ink-mute); }
+  .sch-legend .dot { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+  .dot.has { background: var(--brand); }
+  .dot.none { background: #f1f3f7; border: 1px dashed #d4dae3; }
+  .dot.empty { background: transparent; border: 1px solid var(--line); }
+
+  /* FR-M5 新建课堂预填 */
+  .prefill { border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+  .pf-row { display: flex; padding: 10px 14px; font-size: 13px; border-bottom: 1px solid var(--line); }
+  .pf-row:last-child { border-bottom: none; }
+  .pf-label { width: 56px; flex-shrink: 0; color: var(--ink-mute); }
+  .pf-val { font-weight: 600; }
+  .pf-val small { font-weight: 400; color: var(--ink-mute); margin-left: 6px; }
+  .seg { display: flex; flex-wrap: wrap; gap: 8px; }
+  .seg-item { border: 1.5px solid var(--line); border-radius: 10px; padding: 10px 14px; font-size: 13px; cursor: pointer; transition: all .15s; user-select: none; }
+  .seg-item:hover { border-color: var(--brand); }
+  .seg-item.active { border-color: var(--brand); background: var(--brand-soft); color: var(--brand); font-weight: 600; }
+
+  .pf-upload { color: var(--brand); font-weight: 500; cursor: pointer; }
+
+  /* FR-M7 PPT 批量归类 */
+  .ppt-bar { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; }
+  .ppt-match { font-size: 13px; }
+  .ppt-match th, .ppt-match td { padding: 8px 10px; }
+  .ppt-match .btn { padding: 4px 10px; font-size: 12px; }
+  .b-conf-h { background: #dcfce7; color: #15803d; }
+  .b-conf-l { background: #fef3c7; color: #b7791f; }
+
+  /* FR-M8 花费管理 */
+  .cost-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 14px; }
+  .kpi { border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; background: #fafbfe; }
+  .kpi-label { font-size: 12px; color: var(--ink-mute); }
+  .kpi-val { font-size: 22px; font-weight: 700; color: var(--ink); margin: 2px 0; }
+  .kpi-val small { font-size: 12px; font-weight: 400; color: var(--ink-mute); }
+  .kpi-sub { font-size: 11px; color: var(--ink-mute); }
+  .budget { height: 5px; background: #e8ecf1; border-radius: 3px; margin-top: 8px; overflow: hidden; }
+  .budget i { display: block; height: 100%; background: linear-gradient(90deg, var(--brand), #7c5cff); border-radius: 3px; }
+  .cost-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+  .cost-panel { border: 1px solid var(--line); border-radius: 10px; padding: 14px; background: #fff; }
+  .cp-title { font-size: 13px; font-weight: 600; margin-bottom: 10px; color: var(--ink); }
+  .cp-note { font-size: 11px; color: var(--ink-mute); margin-top: 10px; }
+  .bar-row { display: grid; grid-template-columns: 120px 1fr 52px; align-items: center; gap: 8px; font-size: 12px; margin: 7px 0; }
+  .bar-row b { text-align: right; font-weight: 600; }
+  .bar { height: 8px; background: #eef1f7; border-radius: 4px; overflow: hidden; }
+  .bar i { display: block; height: 100%; background: var(--brand); border-radius: 4px; }
+  .bar.hl i { background: #7c5cff; }
+  .bar.eco i { background: var(--accent); }
+  .bar.free i { background: #c9d1de; }
+  .mini-tbl { width: 100%; font-size: 12px; border: none; box-shadow: none; }
+  .mini-tbl th { background: #f4f6fb; padding: 6px 8px; font-size: 11px; }
+  .mini-tbl td { padding: 6px 8px; }
+  .trend { display: flex; align-items: flex-end; gap: 8px; height: 110px; padding-top: 6px; }
+  .t-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; height: 100%; justify-content: flex-end; }
+  .t-col i { width: 70%; background: #c7d2fe; border-radius: 4px 4px 0 0; min-height: 2px; }
+  .t-col.today i { background: var(--brand); }
+  .t-col b { font-size: 10px; color: var(--ink-soft); }
+  .t-col span { font-size: 10px; color: var(--ink-mute); }
+
+  /* 8. 技术架构分层图 */
+  .arch-card { padding: 18px; }
+  .arch-layer { border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; background: #fafbff; }
+  .arch-layer.data { background: #f6faf8; border-color: #d8ece4; }
+  .arch-layer.ext { background: #fff9f0; border-color: #f3e2c4; }
+  .al-name { font-size: 12px; font-weight: 700; color: var(--brand); letter-spacing: .5px; margin-bottom: 8px; }
+  .arch-layer.data .al-name { color: #0e9f6e; }
+  .arch-layer.ext .al-name { color: #b7791f; }
+  .al-boxes { display: flex; flex-wrap: wrap; gap: 8px; }
+  .al-boxes span { background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 6px 12px; font-size: 12px; color: var(--ink-soft); line-height: 1.4; }
+  .arch-arrow { text-align: center; font-size: 11px; color: var(--ink-mute); margin: 8px 0; }
+
+  /* FR-M6 课堂封面 */
+  .cover-row { display: flex; gap: 12px; flex-wrap: wrap; }
+  .cover-thumb { width: 160px; aspect-ratio: 16 / 9; border-radius: 8px; padding: 10px 12px; color: #fff; display: flex; flex-direction: column; justify-content: space-between; box-shadow: var(--shadow); }
+  .cover-thumb .ct-bar { width: 24px; height: 3px; background: rgba(255,255,255,.85); border-radius: 2px; }
+  .cover-thumb .ct-title { font-size: 12px; font-weight: 700; line-height: 1.3; }
+  .cover-thumb .ct-meta { font-size: 9px; opacity: .92; margin-top: 3px; letter-spacing: .3px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="hero">
+  <span class="tag">产品需求文档 · PRD</span>
+  <h1>同桌（Deskmate）</h1>
+  <p>面向留学生的智能桌面学习伴侣 · 网课 / 线下课双语字幕与课堂任务管家</p>
+  <div class="meta">
+    <span>用户：<b>同学</b></span>
+    <span>产品：<b>同桌</b></span>
+    <span>形态：<b>Windows 桌面软件（首期仅适配 Windows 10 / 11）</b></span>
+    <span>版本：<b>v1.1 MVP</b></span>
+    <span>日期：<b>2026-10-14</b></span>
+  </div>
+</div>
+
+<div class="toc">
+  <h3>目录</h3>
+  <ol>
+    <li><a href="#bg">背景与目标</a></li>
+    <li><a href="#terms">术语与角色</a></li>
+    <li><a href="#scope">范围</a></li>
+    <li><a href="#flow">核心流程</a></li>
+    <li><a href="#fr">功能需求</a></li>
+    <li><a href="#shared">共享规则</a></li>
+    <li><a href="#models">模型组合与成本</a></li>
+    <li><a href="#arch">技术架构与技术栈</a></li>
+    <li><a href="#open">开放问题</a></li>
+  </ol>
+</div>
+
+<section id="bg">
+  <h2>1. 背景与目标</h2>
+  <div class="card">
+    <p><b>问题：</b>留学生在英语授课环境中面临三重压力——听课语言障碍、随堂互动/测验容易错过、课后复习资料分散。现有翻译工具仅做单向字幕，无法主动提醒"此刻需要你做什么"，也无法在同学离开座位时兜底。</p>
+    <p><b>产品决策：</b>打造桌面端"同桌"，以多模态大模型为核心，提供实时双语字幕、课堂任务主动检测与提醒、离线状态邮件兜底、课后一键归档。</p>
+    <p><b>可观测的完成结果：</b>同学完成一节课后，同桌已保存课堂录音、双语文本、笔记与待办任务清单；课中出现需行动项时始终弹窗，同学不在座位时<b>弹窗与 QQ 邮件双通道同时提醒</b>。</p>
+  </div>
+  <h3>设计原则</h3>
+  <ul>
+    <li><b>简约现代：</b>界面留白充足、单一主色、信息层级清晰，不打断听课。</li>
+    <li><b>不打扰优先：</b>字幕常驻、任务弹窗克制，所有提醒可一键忽略或延后。</li>
+    <li><b>成本可控：</b>模型组合可切换，标注每小时预估花费。</li>
+  </ul>
+</section>
+
+<section id="terms">
+  <h2>2. 术语与角色</h2>
+  <table>
+    <tr><th>术语</th><th>定义</th></tr>
+    <tr><td>同学</td><td>产品唯一使用者，即留学生本人。</td></tr>
+    <tr><td>同桌</td><td>本产品。一个常驻桌面的 AI 学习助手。</td></tr>
+    <tr><td>课堂语言</td><td>老师授课使用的语言，默认 <b>英语</b>。</td></tr>
+    <tr><td>日常语言</td><td>同学母语/界面语言，默认 <b>中文</b>。双语字幕中译文为此语言。</td></tr>
+    <tr><td>网课模式</td><td>音频来源为系统输出（直播/录播软件），同桌捕获系统音频。</td></tr>
+    <tr><td>线下课模式</td><td>音频来源为笔记本麦克风，同桌录制教室现场声音。</td></tr>
+    <tr><td>行动项</td><td>需要同学立即或课后处理的事项：随堂测验、课堂互动提问、课后作业、项目提交等。</td></tr>
+    <tr><td>字幕窗口</td><td>实时显示双语字幕的悬浮/内嵌区域。</td></tr>
+    <tr><td>课程</td><td>一门学期课程，含课程名、课程代码、地点、周内多段上课时间与起止周；课程下包含多次<b>课堂</b>记录。</td></tr>
+    <tr><td>课堂</td><td>一次实际上课记录（原"一节课"），从"新建课堂"开始到"结束课程"归档为止，归属于某门课程。</td></tr>
+    <tr><td>节次/时段</td><td>一天内的上课时间段（如 第1–2节 08:00–09:35），用于课程表排布与新建课堂时的自动匹配。</td></tr>
+    <tr><td>起止周 / 开学日期</td><td>课程开设的周次范围（如 第 1–16 周）；周次依据设置中的"开学日期"（第一周周一）与系统日期计算。</td></tr>
+    <tr><td>课堂封面</td><td>每次课堂归档后自动生成的简洁缩略图，用于课程主页与课程表的小尺寸展示。</td></tr>
+    <tr><td>课件（PPT）</td><td>本节课使用的幻灯片文件（.pptx/.ppt/.pdf）。老师基本照 PPT 讲授，因此产品<b>不捕获摄像头/屏幕画面</b>，改由同学上传课件来补充板书信息。</td></tr>
+    <tr><td>用量明细</td><td>每次模型调用的旁路计费记录：时间、所属课堂、功能环节、模型、输入/缓存/输出 Token（或 ASR 秒数）、单价与金额。所有花费汇总均由该明细按统一口径聚合。</td></tr>
+  </table>
+</section>
+
+<section id="scope">
+  <h2>3. 范围</h2>
+  <h3>P0（MVP 必备）</h3>
+  <ul>
+    <li><b>课程管理：</b>新建课程（课程名、课程代码、地点、周内多段时间、起止周），课程主页展示全部课堂（封面、标题、时间），课堂主页展示本次课堂记录的全部信息</li>
+    <li><b>周课程表：</b>按周展示、默认本周、可切换周；用颜色对比度区分本节课是否有记录，有记录可点击进入课堂主页</li>
+    <li><b>新建课堂：</b>根据系统时间与课程表自动预填所属课程与节次；模式选择、模型系列选择在同一界面完成</li>
+    <li>课堂结束后自动生成简洁封面（适合小尺寸显示）</li>
+    <li><b>PPT 课件：</b>课堂主页/新建课堂时可上传本节课 PPT；课程主页支持批量上传并由大模型自动归类到对应课堂；绑定后自动重新生成该课堂笔记（字幕 + 课件融合）</li>
+    <li>课程开始前模式选择（网课 / 线下课）</li>
+    <li>实时流式录音转写 + 翻译，双语字幕显示</li>
+    <li>每 15s 用前 1 分钟字幕检测行动项，弹窗提示任务与答案</li>
+    <li>摄像头每 10s 在位检测；不在位且检测到行动项时，桌面弹窗与 QQ 邮件双通道同时提醒</li>
+    <li>课后自动保存：低码率录音、双语文本、笔记、待办/项目清单、课堂封面</li>
+    <li>模型组合切换（含每小时成本标注）</li>
+    <li><b>花费管理：</b>独立界面按时间、课程/课堂、模型系列、模型、功能环节等多维度展示花费与用量，支持月度预算与超额提醒</li>
+    <li>仅适配 Windows 10 / 11</li>
+  </ul>
+  <h3>P1（后续迭代）</h3>
+  <ul>
+    <li>课堂记录搜索、收藏与标签</li>
+    <li>行动项日历与截止提醒（系统通知）</li>
+    <li>字幕导出 SRT / PDF</li>
+    <li>课堂重点高亮与智能问答（基于本课字幕）</li>
+    <li>macOS 适配评估</li>
+  </ul>
+  <h3>明确不做</h3>
+  <ul>
+    <li>不做社交/同学协作功能</li>
+    <li>不做移动端；首期不做 macOS / Linux（仅 Windows 桌面）</li>
+    <li>不录制/不捕获老师摄像头画面与电脑屏幕，板书信息以同学上传 PPT 替代（在位检测摄像头仅本地抓拍推理，不录像、不上传）</li>
+    <li>不做实时 TTS 朗读译文（避免干扰课堂）</li>
+  </ul>
+</section>
+
+<section id="flow">
+  <h2>4. 核心流程</h2>
+  <div class="card">
+    <div class="flow">
+      <span class="node">启动同桌</span><span class="arrow">→</span>
+      <span class="node">课程页 / 周课程表</span><span class="arrow">→</span>
+      <span class="node">新建课堂（自动预填课程与节次）</span><span class="arrow">→</span>
+      <span class="node">选模式 + 模型系列</span><span class="arrow">→</span>
+      <span class="node">开始课程</span><span class="arrow">→</span>
+      <span class="node">实时双语字幕</span><span class="arrow">→</span>
+      <span class="node">每15s行动项检测</span><span class="arrow">→</span>
+      <span class="node">弹窗/邮件提醒</span><span class="arrow">→</span>
+      <span class="node">结束课程</span><span class="arrow">→</span>
+      <span class="node">归档 + 生成封面</span><span class="arrow">→</span>
+      <span class="node">课堂主页回顾</span>
+    </div>
+  </div>
+  <h3>课程 / 课堂状态机</h3>
+  <table>
+    <tr><th>状态</th><th>触发</th><th>行为</th></tr>
+    <tr><td>待机</td><td>应用启动</td><td>主导航：课程 / 课程表 / 花费 / 设置；默认进入课程页</td></tr>
+    <tr><td>待开始</td><td>点击"新建课堂"</td><td>按系统时间与课程表自动预填课程、节次、地点、周次；同学选择模式与模型系列</td></tr>
+    <tr><td>上课中</td><td>选择模式并点击"开始课程"</td><td>启动音频采集、ASR、翻译、任务检测、在位检测</td></tr>
+    <tr><td>暂停</td><td>同学手动暂停</td><td>暂停音频采集与所有模型调用；字幕窗口保留</td></tr>
+    <tr><td>归档中</td><td>同学点击"结束课程"</td><td>停止采集，生成笔记、任务清单与课堂封面，保存文件</td></tr>
+    <tr><td>已完成</td><td>归档完成</td><td>进入本次课堂主页；课程表中对应时段标记为"有记录"</td></tr>
+  </table>
+</section>
+
+<section id="fr">
+  <h2>5. 功能需求</h2>
+
+  <h3>5.1 课程管理（课程页） <span class="badge b-p0">P0</span></h3>
+  <p><b>目的：</b>以"课程 → 课堂"两级结构，归档整学期的所有上课记录。</p>
+  <table>
+    <tr><th>规则</th><th>说明</th></tr>
+    <tr><td>课程页</td><td>应用启动后默认进入课程页，以卡片/列表展示全部课程：课程名、课程代码、地点、本学期课堂数。</td></tr>
+    <tr><td>新建课程</td><td>点击"新建课程"填写：<b>课程名</b>（必填）、<b>课程代码</b>（选填）、<b>上课地点</b>（选填）、<b>时间（周内多段）</b>、<b>起止周</b>。</td></tr>
+    <tr><td>周内多段时间</td><td>每段含"星期几 + 开始时间 + 结束时间"，可添加/删除任意多段（如 周一 08:00–09:35、周三 10:00–11:35）；同一门课一周可排多次。</td></tr>
+    <tr><td>起止周</td><td>填写起始周与结束周（如 第 1–16 周）；当前周次由"开学日期"（设置中配置，默认第一周周一）与系统日期计算。</td></tr>
+    <tr><td>课程主页</td><td>点击课程进入，按时间倒序展示该课程的所有课堂；每个课堂卡片显示<b>封面、标题（如 第 8 讲 · 10-14）、上课时间</b>，并标注模式（网课/线下课）与"已附课件"角标。页面提供<b>"批量上传 PPT"</b>入口（规则见 5.8）。</td></tr>
+    <tr><td>课堂主页</td><td>点击课堂卡片进入，展示本次课堂记录的全部信息：封面、基本信息（日期时间、节次、地点、模式、模型组合、时长、实际花费）、<b>课件 PPT（可预览/上传/删除）</b>、录音回放、双语文本、课堂笔记（可基于课件重新生成）、任务/项目清单。</td></tr>
+    <tr><td>编辑与删除</td><td>课程信息可随时编辑；删除课程需二次确认，可选择同时删除其下课堂记录，或仅解除关联、保留本地文件。</td></tr>
+  </table>
+
+  <h3>5.2 课程表（周视图） <span class="badge b-p0">P0</span></h3>
+  <p><b>目的：</b>按真实课表回顾每周课程，一眼看出哪些课已有记录并可一键进入。</p>
+
+  <div class="demo">
+    <div class="demo-title">交互演示 · <span class="frid">FR-M4</span> 周课程表（实色＝有记录可点击；灰色虚线＝无记录）</div>
+    <div class="sch-bar">
+      <button class="btn ghost">‹ 上一周</button>
+      <div class="sch-title">第 8 周 · 2026-10-12 ~ 10-18</div>
+      <button class="btn ghost">下一周 ›</button>
+      <button class="btn">回到本周</button>
+    </div>
+    <div class="sch-grid">
+      <div></div>
+      <div class="sch-head">周一</div>
+      <div class="sch-head">周二</div>
+      <div class="sch-head today">周三 · 今天</div>
+      <div class="sch-head">周四</div>
+      <div class="sch-head">周五</div>
+      <div class="sch-head">周六</div>
+      <div class="sch-head">周日</div>
+
+      <div class="sch-time">08:00–09:35<br>第1–2节</div>
+      <div class="sch-cell has" onclick="openClassDemo()">微积分<small>理科楼 A201</small></div>
+      <div class="sch-cell empty"></div>
+      <div class="sch-cell empty"></div>
+      <div class="sch-cell empty"></div>
+      <div class="sch-cell has" onclick="openClassDemo()">宏观经济学<small>经管楼 410</small></div>
+      <div class="sch-cell empty"></div>
+      <div class="sch-cell empty"></div>
+
+      <div class="sch-time">10:00–11:35<br>第3–4节</div>
+      <div class="sch-cell empty"></div>
+      <div class="sch-cell none">程序设计基础<small>机房 2</small></div>
+      <div class="sch-cell has today" onclick="openClassDemo()">学术英语写作<small>文科楼 305</small></div>
+      <div class="sch-cell empty"></div>
+      <div class="sch-cell empty"></div>
+      <div class="sch-cell empty"></div>
+      <div class="sch-cell empty"></div>
+
+      <div class="sch-time">14:00–15:35<br>第5–6节</div>
+      <div class="sch-cell empty"></div>
+      <div class="sch-cell empty"></div>
+      <div class="sch-cell empty"></div>
+      <div class="sch-cell none">数据结构<small>理科楼 B102</small></div>
+      <div class="sch-cell empty"></div>
+      <div class="sch-cell empty"></div>
+      <div class="sch-cell empty"></div>
+    </div>
+    <div class="sch-legend">
+      <span><i class="dot has"></i>有记录（点击进入课堂主页）</span>
+      <span><i class="dot none"></i>无记录</span>
+      <span><i class="dot empty"></i>未排课</span>
+    </div>
+  </div>
+
+  <table>
+    <tr><th>规则</th><th>说明</th></tr>
+    <tr><td>布局</td><td>列 = 周一至周日；行 = 节次/时段（默认按上午、下午、晚上大节划分，具体节次时间可在设置中配置）；单元格显示课程名与地点。</td></tr>
+    <tr><td>默认本周</td><td>依据系统日期与开学日期自动定位当前周，顶部显示"第 X 周 · 起止日期"，并高亮"今天"所在列与当前时段。</td></tr>
+    <tr><td>切换周</td><td>提供"上一周 / 下一周 / 回到本周"；超出课程起止周的周次可浏览，但不展示不在开课周内的课程。</td></tr>
+    <tr><td>记录状态</td><td><b>有记录</b>：高对比度实色（品牌色填充），可点击直接进入对应课堂主页；<b>无记录</b>：低对比度灰色 + 虚线描边，不可点击；<b>未排课</b>：留空。</td></tr>
+    <tr><td>新建入口</td><td>课程表页与课程页均提供"新建课堂"按钮（见 5.3）；同一时段已有进行中的课堂时，按钮变为"继续进行中的课堂"。</td></tr>
+  </table>
+
+  <h3>5.3 新建课堂与启动配置 <span class="badge b-p0">P0</span></h3>
+  <p><b>目的：</b>一键开始当前这节课——系统自动认出"现在是哪节课"，模式与模型系列在同一界面一次选定。</p>
+
+  <div class="demo">
+    <div class="demo-title">交互演示 · <span class="frid">FR-M5</span> 新建课堂（按系统时间与课程表自动预填）</div>
+    <div class="prefill">
+      <div class="pf-row"><span class="pf-label">课程</span><span class="pf-val">学术英语写作 <small>ENGL-102</small></span></div>
+      <div class="pf-row"><span class="pf-label">节次</span><span class="pf-val">周三 第 3–4 节 · 10:00–11:35</span></div>
+      <div class="pf-row"><span class="pf-label">地点</span><span class="pf-val">文科楼 305</span></div>
+      <div class="pf-row"><span class="pf-label">周次</span><span class="pf-val">第 8 周（系统时间：2026-10-14 周三 10:02）</span></div>
+      <div class="pf-row"><span class="pf-label">课件</span><span class="pf-val pf-upload">⬆ 上传本节课 PPT（可选，课后也可补传）</span></div>
+    </div>
+
+    <div class="demo-title" style="margin-top:16px;">模式选择 · <span class="frid">FR-M1</span></div>
+    <div class="mode-grid" id="modeGrid">
+      <div class="mode-card active" data-mode="online">
+        <div class="icon">🖥️</div>
+        <div class="name">网课模式</div>
+        <div class="desc">捕获系统音频（直播/会议软件）</div>
+      </div>
+      <div class="mode-card" data-mode="offline">
+        <div class="icon">🎙️</div>
+        <div class="name">线下课模式</div>
+        <div class="desc">使用麦克风录制教室声音</div>
+      </div>
+    </div>
+
+    <div class="demo-title" style="margin-top:16px;">模型系列选择（预计花费随选择实时更新，详见<a href="#models">第 7 节</a>）</div>
+    <div class="seg" id="modelSeg">
+      <div class="seg-item" data-tier="🥉 极致省钱" data-cost="¥0">🥉 极致省钱</div>
+      <div class="seg-item" data-tier="🥈 经济版" data-cost="≈¥0.5">🥈 经济版</div>
+      <div class="seg-item active" data-tier="🥇 均衡版" data-cost="≈¥2.0">🥇 均衡版</div>
+      <div class="seg-item" data-tier="💎 高质量版" data-cost="≈¥6.5">💎 高质量版</div>
+      <div class="seg-item" data-tier="自定义" data-cost="自定义">⚙️ 自定义</div>
+    </div>
+
+    <div class="sub-controls">
+      <button class="btn" onclick="startDemo()">开始课程 →</button>
+      <span id="modeHint" style="color:var(--ink-mute);font-size:13px;align-self:center;">已选：网课模式</span>
+      <span id="costHint" style="color:var(--brand);font-size:13px;font-weight:600;align-self:center;margin-left:auto;">🥇 均衡版 · ≈¥2.0 / 小时</span>
+    </div>
+  </div>
+
+  <table>
+    <tr><th>规则</th><th>说明</th></tr>
+    <tr><td>入口</td><td>课程页 / 课程表页点击"新建课堂"。</td></tr>
+    <tr><td>自动预填</td><td>根据系统当前日期与时间，匹配课程表中"星期相同且时段重叠、且当前周在起止周内"的课程，自动预填<b>课程、节次/时段、地点、当前周次</b>；同学可手动修改任一项。</td></tr>
+    <tr><td>预填兜底</td><td>匹配不到任何课程时，课程留空并可手动选择（也允许以"未关联课程"临时开课）；同时段命中多门课时，默认选中时间最匹配的一节并提示切换。</td></tr>
+    <tr><td>周次校验</td><td>当前周不在所选课程起止周内时给出提示（如"该课程本周不在开课周内"），但不阻止开课。</td></tr>
+    <tr><td>模式选择</td><td>网课 / 线下课卡片必选（FR-M1），未选择模式不可开始课程。</td></tr>
+    <tr><td>模型系列选择</td><td>同一界面选择模型组合（极致省钱 / 经济 / 均衡 / 高质量 / 自定义），旁注每小时预估花费；默认沿用上一次使用的组合。</td></tr>
+    <tr><td>语言设置</td><td>课堂语言默认英语、日常语言默认中文；可在开始前下拉切换。</td></tr>
+    <tr><td>课件上传（可选）</td><td>本界面可提前上传本节课 PPT（.pptx/.ppt/.pdf，可多个文件）；已上传则归档时直接生成"字幕 + 课件"融合笔记。未提前上传也没关系，课后可在课堂主页补传（见 5.8）。</td></tr>
+    <tr><td>网课模式音频源</td><td>捕获系统输出音频（Windows WASAPI loopback）。需提示同学关闭其他音源干扰。</td></tr>
+    <tr><td>线下课模式音频源</td><td>使用默认/选定麦克风。需先请求麦克风权限并显示音量波形。</td></tr>
+    <tr><td>异常</td><td>权限被拒：弹窗引导到 Windows 系统设置；麦克风无信号：提示检查设备。</td></tr>
+    <tr><td>结束与封面</td><td>点击"结束课程"后归档并自动生成本次课堂封面（见 5.7），完成后进入课堂主页。</td></tr>
+  </table>
+
+  <h3>5.4 实时双语字幕 <span class="badge b-p0">P0</span></h3>
+  <p><b>目的：</b>让同学听懂课堂内容。</p>
+
+  <div class="demo">
+    <div class="demo-title">交互演示 · <span class="frid">FR-M2</span> 字幕窗口</div>
+    <div class="subtitle-stage">
+      <div class="sub-meta">英语 → 中文 · 模型: GLM-4.5-Air</div>
+      <div class="sub-line en">Today we'll discuss the gradient descent algorithm.</div>
+      <div class="sub-line cn">今天我们将讨论梯度下降算法。</div>
+      <div class="sub-line en">Please complete the quiz on page 12 within five minutes.</div>
+      <div class="sub-line cn">请在五分钟内完成第 12 页的测验。</div>
+      <div class="sub-line en live">The learning rate controls how big each step is...</div>
+    </div>
+    <div class="sub-controls">
+      <button class="btn ghost">⏸ 暂停字幕</button>
+      <button class="btn ghost">⬇ 历史记录</button>
+      <button class="btn ghost">⚙ 语言设置</button>
+    </div>
+  </div>
+
+  <table>
+    <tr><th>规则</th><th>说明</th></tr>
+    <tr><td>音频切片</td><td>按 ~5–10s 切片流式送入 ASR 模型，低延迟返回文本。</td></tr>
+    <tr><td>转写</td><td>调用硅基流动 ASR 模型（如 XingChenASR V3.2-Ultra，免费）。</td></tr>
+    <tr><td>翻译</td><td>转写文本流式送入对话模型翻译为日常语言，与原文逐行配对显示。</td></tr>
+    <tr><td>显示</td><td>原文在上、译文在下；最新一行高亮并标记"直播中"。</td></tr>
+    <tr><td>延迟目标</td><td>原文出现 ≤ 3s，译文出现 ≤ 6s。<span class="assumption">[Assumption, TBD] 取决于网络与模型响应</span></td></tr>
+    <tr><td>历史</td><td>字幕历史可滚动回看；不丢失。</td></tr>
+    <tr><td>异常</td><td>ASR 失败：重试 1 次；仍失败则该行显示"[转写失败]"并继续。翻译失败：仅显示原文。</td></tr>
+  </table>
+
+  <h3>5.5 课堂任务智能检测与提醒 <span class="badge b-p0">P0</span></h3>
+  <p><b>目的：</b>不错过任何需要动手的课堂环节。</p>
+
+  <div class="demo">
+    <div class="demo-title">交互演示 · <span class="frid">FR-M3</span> 行动项弹窗</div>
+    <div style="display:flex;justify-content:center;">
+      <div class="popup">
+        <div class="ptitle">
+          ⚠️ 发现课堂行动项
+          <span class="ptype">随堂测验</span>
+        </div>
+        <div class="pbody">
+          老师要求 5 分钟内完成教材第 12 页的梯度下降测验。
+        </div>
+        <div class="panswer">
+          <b>行动指引：</b>翻到第 12 页；第 1 题答案约为 <b>0.01</b>（学习率），第 2 题选 <b>B</b>。
+        </div>
+        <div class="pactions">
+          <button class="btn">知道了</button>
+          <button class="btn ghost">稍后提醒</button>
+          <button class="btn ghost">加入课后任务</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <table>
+    <tr><th>规则</th><th>说明</th></tr>
+    <tr><td>检测频率</td><td>每 15s 触发一次，输入为<b>前 1 分钟</b>的字幕文本（含原文+译文）。</td></tr>
+    <tr><td>Prompt 指令</td><td>要求模型判断该片段是否包含需同学行动的内容；如有，输出 JSON：<code>{type, content, action_guide, urgency}</code>。</td></tr>
+    <tr><td>行动项类型</td><td>随堂测验 / 课堂互动（回答问题）/ 课堂任务 / 课后作业 / 项目提交 / 其他。</td></tr>
+    <tr><td>答案/指引</td><td>模型基于课堂上下文给出参考答案或操作步骤；标注"答案"以便同学快速响应。</td></tr>
+    <tr><td>弹窗条件</td><td>仅当检测到行动项时弹窗；无行动项则静默。</td></tr>
+    <tr><td>去重</td><td>同一行动项在 2 分钟内不重复弹窗（按内容相似度判断）。</td></tr>
+    <tr><td>弹窗操作</td><td>"知道了"（关闭）、"稍后提醒"（5 分钟后再弹）、"加入课后任务"（归档时列入清单）。</td></tr>
+    <tr><td>异常</td><td>模型调用超时（>10s）跳过本轮；连续失败 3 次暂停检测并提示。</td></tr>
+  </table>
+
+  <h3>5.6 在位检测与邮件提醒 <span class="badge b-p0">P0</span></h3>
+  <p><b>目的：</b>同学离开座位时，重要行动项不遗漏。</p>
+  <table>
+    <tr><th>规则</th><th>说明</th></tr>
+    <tr><td>检测方式</td><td>调用笔记本摄像头，使用<b>本地小模型</b>（轻量人脸检测，如 MediaPipe / YOLO-nano）判断是否有人在屏幕前。</td></tr>
+    <tr><td>检测频率</td><td>每 <b>10s</b> 抓拍一帧推理一次，兼顾实时性与性能/隐私压力。<span class="assumption">[Assumption, TBD] 频率可在设置中调整</span></td></tr>
+    <tr><td>隐私</td><td>图像<b>仅本地处理</b>，不上传任何服务器；处理后立即丢弃，不存储帧。</td></tr>
+    <tr><td>不在位判定</td><td>连续 2 次（约 20s）未检测到人脸 → 标记为"不在位"。</td></tr>
+    <tr><td>双通道提醒</td><td>只要检测到行动项，桌面弹窗始终弹出（不因不在位而抑制）；当处于"不在位"状态时，<b>在弹窗之外同时发送 QQ 邮件</b>，两条通道并行触发、互为兜底，确保人离开电脑前也不遗漏。</td></tr>
+    <tr><td>邮件内容</td><td>行动项类型、任务内容、行动指引（答案）、发生时间。</td></tr>
+    <tr><td>邮件服务</td><td>使用 QQ 邮箱 SMTP（smtp.qq.com:465 SSL），需同学提供邮箱地址与 SMTP 授权码。</td></tr>
+    <tr><td>回到座位</td><td>连续 2 次（约 20s）检测到人脸 → 标记"在位"，此后行动项仅弹窗、不再发送邮件；离开期间弹窗中未处理的行动项保持未读/置顶，回位后仍可看到。</td></tr>
+    <tr><td>异常</td><td>摄像头被占用/无权限：在位检测不可用，提示同学；邮件发送失败：重试 2 次，仍失败则记录到归档日志。</td></tr>
+  </table>
+
+  <h3>5.7 课后整理与归档（含课堂封面） <span class="badge b-p0">P0</span></h3>
+  <p><b>目的：</b>一节课结束后，所有资料自动整理好，可随时复习。</p>
+
+  <div class="demo">
+    <div class="demo-title">交互演示 · <span class="frid">FR-M6</span> 课堂封面（小尺寸示意：课程色 + 课程名 + 日期 + 讲次）</div>
+    <div class="cover-row">
+      <div class="cover-thumb" style="background:linear-gradient(135deg,#4f6df5,#7c5cff);">
+        <div class="ct-bar"></div>
+        <div><div class="ct-title">学术英语写作</div><div class="ct-meta">第 8 讲 · 2026-10-14 · 网课</div></div>
+      </div>
+      <div class="cover-thumb" style="background:linear-gradient(135deg,#0ea5b7,#11c29a);">
+        <div class="ct-bar"></div>
+        <div><div class="ct-title">微积分</div><div class="ct-meta">第 7 讲 · 2026-10-12 · 线下课</div></div>
+      </div>
+      <div class="cover-thumb" style="background:linear-gradient(135deg,#f59e0b,#ef4444);">
+        <div class="ct-bar"></div>
+        <div><div class="ct-title">宏观经济学</div><div class="ct-meta">第 8 讲 · 2026-10-16 · 网课</div></div>
+      </div>
+    </div>
+  </div>
+
+  <table>
+    <tr><th>产物</th><th>格式/规则</th></tr>
+    <tr><td>课堂录音</td><td>低码率保存：MP3 / AAC，<b>≤ 32 kbps</b>，单声道。一节课 1 小时约 <b>14 MB</b>。</td></tr>
+    <tr><td>双语文本</td><td>Markdown / TXT，时间戳 + 原文 + 译文对齐。</td></tr>
+    <tr><td>课件 PPT</td><td>同学在开课前或课后上传的原始课件，存入课堂目录 <code>课件/</code> 子文件夹；归档时若已有课件，笔记直接按"字幕 + 课件"生成（见 5.8）。</td></tr>
+    <tr><td>课堂笔记</td><td>由大模型基于全量字幕生成：章节大纲、关键概念、重点总结；<b>已绑定课件时升级为融合笔记</b>（PPT 章节结构 + 字幕讲解），课后补传/更换课件可重新生成并保留上一版。</td></tr>
+    <tr><td>任务/项目清单</td><td>汇总课中检测到的所有行动项 + 同学手动"加入课后任务"的项；含类型、内容、指引、是否提交。</td></tr>
+    <tr><td>课堂封面</td><td>归档完成后<b>自动生成</b>，设计简洁：<b>课程主题色块 + 课程名 + 日期 + 第 N 讲/节次 + 模式标记</b>；16:9 PNG（640×360），保证在课程卡片小尺寸（约 160px 宽）下文字仍清晰可辨；保存为 <code>cover.png</code>。<span class="assumption">[Assumption] 首期采用本地模板渲染，不调用 AI 绘图（零成本、即时生成）；AI 风格化封面见 Q6。</span></td></tr>
+    <tr><td>保存位置</td><td>默认 <code>~/Documents/同桌/{课程名}/{YYYYMMDD}_{节次}/</code>（如 <code>Documents/同桌/学术英语写作/20261014_第3-4节/</code>），可在设置中更改。</td></tr>
+    <tr><td>命名</td><td>课堂标题默认为"课程名 + 第 N 讲 + 日期"（第 N 讲按该课程已归档课堂数自动递增），可在课堂主页修改；未关联课程时用"课程-YYYYMMDD-HHmm"。</td></tr>
+    <tr><td>生成时机</td><td>点击"结束课程"后立即开始；封面本地即时生成，笔记与清单由模型异步生成，显示进度。课后任何时间补传课件，都会再次异步触发笔记重生成（5.8）。</td></tr>
+    <tr><td>异常</td><td>笔记生成失败：仍保存录音、文本与封面，笔记标注"生成失败，可重试"。</td></tr>
+  </table>
+
+  <h3>5.8 课件（PPT）上传与笔记增强 <span class="badge b-p0">P0</span></h3>
+  <p><b>目的：</b>老师基本照 PPT 讲授，不做摄像头/屏幕画面捕获；改为上传课件，让笔记融合幻灯片内容，课后也能补齐。</p>
+
+  <div class="demo">
+    <div class="demo-title">交互演示 · <span class="frid">FR-M7</span> 课程主页批量上传 PPT → 大模型归类（可改派后一键确认）</div>
+    <div class="ppt-bar">
+      <button class="btn">⬆ 批量上传 PPT（已选 3 个文件）</button>
+      <span style="font-size:12px;color:var(--ink-mute);align-self:center;">支持 .pptx / .ppt / .pdf，单个 ≤ 100 MB</span>
+    </div>
+    <table class="ppt-match">
+      <tr><th>文件</th><th>建议归类</th><th>置信度</th><th>理由</th><th>操作</th></tr>
+      <tr>
+        <td>Lecture8_Academic Writing.pptx</td>
+        <td>第 8 讲 · 10-14</td>
+        <td><span class="badge b-conf-h">高 · 自动绑定</span></td>
+        <td>标题含 Lecture 8，正文出现本周字幕中的 "thesis statement"</td>
+        <td><button class="btn ghost">改派</button></td>
+      </tr>
+      <tr>
+        <td>week7 slides.pdf</td>
+        <td>第 7 讲 · 10-12</td>
+        <td><span class="badge b-conf-h">高 · 自动绑定</span></td>
+        <td>文件名含 week7，日期与课堂一致</td>
+        <td><button class="btn ghost">改派</button></td>
+      </tr>
+      <tr>
+        <td>课件_期末复习.pptx</td>
+        <td>未匹配到课堂</td>
+        <td><span class="badge b-conf-l">低 · 待确认</span></td>
+        <td>内容像复习课，本学期尚无对应日期的课堂记录</td>
+        <td><button class="btn">手动选择</button></td>
+      </tr>
+    </table>
+    <div class="sub-controls">
+      <button class="btn">确认并重新生成笔记 →</button>
+      <span style="font-size:12px;color:var(--ink-mute);align-self:center;">确认后 2 节高置信度课堂自动重生成，预计额外花费 ≈ ¥0.1</span>
+    </div>
+  </div>
+
+  <table>
+    <tr><th>规则</th><th>说明</th></tr>
+    <tr><td>三个上传入口</td><td>① <b>新建课堂界面</b>：开课前可选预传本节课 PPT；② <b>课堂主页</b>：单份/多份上传，直接绑定本节；③ <b>课程主页</b>：批量上传多份 PPT，由大模型自动归类到该课程下的具体课堂。</td></tr>
+    <tr><td>文件要求</td><td>支持 .pptx / .ppt / .pdf，单个文件 ≤ 100 MB；同一课堂可绑定多份课件，按文件名/页码排序。</td></tr>
+    <tr><td>内容解析</td><td>优先在本地提取幻灯片标题、正文与备注文本；图片型幻灯片/扫描版 PDF 调用多模态模型做 OCR；<b>不录制、不捕获老师摄像头或屏幕画面</b>。</td></tr>
+    <tr><td>批量归类方式</td><td>一次模型调用完成全局匹配：输入 = 候选课堂集合（讲次、日期、课堂标题、字幕关键词摘要）+ 每份文件的文件名与前若干页文本摘要；输出每份文件的 <code>{课堂, 置信度, 理由}</code>。批量上下文一次推理比逐份判断更准、更省。</td></tr>
+    <tr><td>置信度处理</td><td><b>高置信度</b>自动绑定并标记；<b>低置信度</b>进入"待确认"列表，同学可按理由核对并<b>手动改派</b>；无法匹配任何课堂的文件进入"未分配"暂存区，可稍后手动指定课堂，不影响其他文件入库。</td></tr>
+    <tr><td>笔记重新生成</td><td>课件绑定后<b>自动触发</b>该课堂笔记重生成：以双语音频转写为主线，用 PPT 章节结构重组、补齐幻灯片中的定义/公式/图表说明，标注"课件参考"；课堂主页也提供"用课件重新生成笔记"手动入口。</td></tr>
+    <tr><td>版本与花费</td><td>重生成异步执行并显示进度；新笔记覆盖当前版本，<b>保留上一版可一键回滚</b>；重生成前提示预计额外花费，计入该课堂实际花费。</td></tr>
+    <tr><td>文件保存</td><td>原件保存到课堂目录下的 <code>课件/</code> 子文件夹（见 5.7）；课堂主页支持在线预览（PDF 渲染/幻灯片缩略图）、下载与移除（移除仅解除绑定，可选同时删除本地文件）。</td></tr>
+    <tr><td>异常</td><td>加密/损坏文件：标记解析失败并提示重新导出；模型归类失败：全部文件转为手动指定，不阻塞上传；OCR/笔记重生成失败：课件仍保留可预览，笔记标注"生成失败，可重试"。</td></tr>
+  </table>
+
+  <h3>5.9 花费管理 <span class="badge b-p0">P0</span></h3>
+  <p><b>目的：</b>让同学对每一分钱花在哪一目了然，并能按预算主动控费。数据来自每节课的<b>用量明细</b>，所有汇总卡片、图表与排行同口径（总花费 = 筛选区间内明细金额求和；调用次数 = 明细条数）。</p>
+
+  <div class="demo">
+    <div class="demo-title">交互演示 · <span class="frid">FR-M8</span> 花费管理（2026 年 10 月 · 示意数据）</div>
+
+    <div class="cost-kpis">
+      <div class="kpi"><div class="kpi-label">本月花费</div><div class="kpi-val">¥12.86</div><div class="kpi-sub">预算 ¥30 · 已用 43%</div>
+        <div class="budget"><i style="width:43%"></i></div></div>
+      <div class="kpi"><div class="kpi-label">今日</div><div class="kpi-val">¥1.74</div><div class="kpi-sub">本周 ¥6.20</div></div>
+      <div class="kpi"><div class="kpi-label">累计花费</div><div class="kpi-val">¥48.32</div><div class="kpi-sub">本学期 · 23 节课堂</div></div>
+      <div class="kpi"><div class="kpi-label">模型调用</div><div class="kpi-val">5,612 <small>次</small></div><div class="kpi-sub">Token 8.4M · ASR 21.5h</div></div>
+    </div>
+
+    <div class="cost-cols">
+      <div class="cost-panel">
+        <div class="cp-title">按功能环节</div>
+        <div class="bar-row"><span>行动项检测</span><div class="bar"><i style="width:62%"></i></div><b>¥7.98</b></div>
+        <div class="bar-row"><span>笔记生成 / 课件增强</span><div class="bar"><i style="width:24%"></i></div><b>¥3.05</b></div>
+        <div class="bar-row"><span>字幕翻译</span><div class="bar"><i style="width:11%"></i></div><b>¥1.42</b></div>
+        <div class="bar-row"><span>ASR 转写</span><div class="bar free"><i style="width:3%"></i></div><b>¥0.41</b></div>
+        <div class="bar-row"><span>封面 / 本地处理</span><div class="bar free"><i style="width:0%"></i></div><b>¥0</b></div>
+      </div>
+      <div class="cost-panel">
+        <div class="cp-title">按模型系列</div>
+        <div class="bar-row"><span>🥇 均衡版</span><div class="bar"><i style="width:68%"></i></div><b>¥8.74</b></div>
+        <div class="bar-row"><span>💎 高质量版</span><div class="bar hl"><i style="width:25%"></i></div><b>¥3.22</b></div>
+        <div class="bar-row"><span>🥈 经济版</span><div class="bar eco"><i style="width:7%"></i></div><b>¥0.90</b></div>
+        <div class="bar-row"><span>🥉 极致省钱（免费）</span><div class="bar free"><i style="width:0%"></i></div><b>¥0</b></div>
+        <div class="cp-note">缓存命中为检测环节节省 ≈ ¥1.84</div>
+      </div>
+    </div>
+
+    <div class="cost-cols">
+      <div class="cost-panel">
+        <div class="cp-title">按课程（本月 Top）</div>
+        <table class="mini-tbl">
+          <tr><th>课程</th><th>课堂数</th><th>时长</th><th>花费</th><th>均价/节</th></tr>
+          <tr><td>学术英语写作</td><td>4</td><td>6.2h</td><td>¥5.10</td><td>¥1.28</td></tr>
+          <tr><td>宏观经济学</td><td>3</td><td>4.5h</td><td>¥4.32</td><td>¥1.44</td></tr>
+          <tr><td>数据结构</td><td>3</td><td>5.0h</td><td>¥3.44</td><td>¥1.15</td></tr>
+        </table>
+      </div>
+      <div class="cost-panel">
+        <div class="cp-title">近 7 日趋势（¥）</div>
+        <div class="trend">
+          <div class="t-col"><i style="height:30%"></i><b>0.6</b><span>10-08</span></div>
+          <div class="t-col"><i style="height:55%"></i><b>1.1</b><span>10-09</span></div>
+          <div class="t-col"><i style="height:0%"></i><b>0</b><span>10-10</span></div>
+          <div class="t-col"><i style="height:80%"></i><b>1.6</b><span>10-12</span></div>
+          <div class="t-col"><i style="height:42%"></i><b>0.84</b><span>10-13</span></div>
+          <div class="t-col today"><i style="height:88%"></i><b>1.74</b><span>今天</span></div>
+          <div class="t-col"><i style="height:0%"></i><b>–</b><span>10-15</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cost-panel">
+      <div class="cp-title">用量明细（可按课程 / 环节 / 模型筛选）</div>
+      <table class="mini-tbl">
+        <tr><th>时间</th><th>课堂</th><th>环节</th><th>模型</th><th>用量</th><th>金额</th></tr>
+        <tr><td>10-14 10:32</td><td>学术英语写作·第8讲</td><td>行动项检测</td><td>DeepSeek-V3.2</td><td>入 520 / 缓存 500 / 出 0</td><td>¥0.002</td></tr>
+        <tr><td>10-14 10:31</td><td>学术英语写作·第8讲</td><td>字幕翻译</td><td>GLM-4.5-Air</td><td>入 1,200 / 出 980</td><td>¥0.007</td></tr>
+        <tr><td>10-14 10:20</td><td>学术英语写作·第8讲</td><td>课件归类/OCR</td><td>多模态视觉模型</td><td>3 页图片</td><td>¥0.060</td></tr>
+        <tr><td>10-14 10:05</td><td>学术英语写作·第8讲</td><td>ASR 转写</td><td>XingChenASR</td><td>312 秒</td><td>¥0（免费）</td></tr>
+      </table>
+      <div class="cp-note">金额为同桌按本地定价表的估算值，最终以硅基流动账户实际账单为准。</div>
+    </div>
+  </div>
+
+  <table>
+    <tr><th>规则</th><th>说明</th></tr>
+    <tr><td>入口与导航</td><td>主导航第三个页签：<b>课程 / 课程表 / 花费 / 设置</b>；课堂主页与课程主页的"实际花费"数字可点击，带筛选跳转到本页对应视图。</td></tr>
+    <tr><td>时间维度</td><td>支持 今日 / 本周 / 本月 / 本学期 / 自定义区间；顶部 KPI 随区间联动：总花费、环比变化、课堂数、上课时长、调用次数、Token 总量、ASR 总时长。</td></tr>
+    <tr><td>课程 / 课堂维度</td><td>按课程汇总花费、课堂数、时长与<b>每节均价</b>；可下钻到单节课花费，并与该课堂主页显示金额一致；支持花费/均价排行。</td></tr>
+    <tr><td>模型系列维度</td><td>按极致省钱/经济/均衡/高质量/自定义统计占比，辅助判断哪种组合性价比最高。</td></tr>
+    <tr><td>模型维度</td><td>按具体模型统计调用次数、输入/缓存/输出 Token（ASR 按秒）与金额，并展示<b>缓存命中节省金额</b>；标注每条用量适用的单价与计费方式，便于解释"为什么是这个价"。</td></tr>
+    <tr><td>功能环节维度</td><td>ASR 转写 / 字幕翻译 / 行动项检测 / 笔记生成 / 课件归类与 OCR / 封面（本地免费），各环节独立金额与占比。</td></tr>
+    <tr><td>免费与付费</td><td>免费模型调用照常计入次数但金额为 0，单独展示"免费调用占比"，让省钱组合的效果可量化。</td></tr>
+    <tr><td>用量明细</td><td>逐次调用列表：时间、所属课堂、环节、模型、输入/缓存/输出用量、单价、金额；支持按课程、环节、模型、金额区间筛选与导出 CSV。</td></tr>
+    <tr><td>预算与提醒</td><td>可设置<b>月度花费预算</b>，KPI 卡显示进度条；达到 80% / 100% 时桌面通知提醒，超预算后新建课堂时提示"建议切换更省钱的模型系列"，但不强制阻止使用。</td></tr>
+    <tr><td>数据口径</td><td>所有花费均为<b>估算</b>：调用发生时按本地维护的定价表旁路、异步计算并写入用量明细（写入失败只记日志、不影响上课）；所有汇总由明细实时聚合，口径与课堂主页一致；定价表随硅基流动官方价格更新，历史记录保留当时单价。</td></tr>
+    <tr><td>离线与异常</td><td>无网络时调用不产生费用的本地环节（封面/在位检测）标记"本地"；价格缺失的模型调用标记"待计价"，更新定价表后可补算。</td></tr>
+  </table>
+
+  <h3>5.10 模型组合切换 <span class="badge b-p0">P0</span></h3>
+  <p><b>目的：</b>同学可在成本与效果间自行权衡。详见 <a href="#models">第 7 节</a>。</p>
+  <table>
+    <tr><th>规则</th><th>说明</th></tr>
+    <tr><td>组合维度</td><td>ASR 模型、翻译模型、任务检测模型、笔记生成模型，四个槽位可独立选。</td></tr>
+    <tr><td>预设组合</td><td>提供"省钱/均衡/高质量"预设，一键切换；也支持自定义。</td></tr>
+    <tr><td>成本显示</td><td>每个组合旁标注预估<b>每小时花费（¥）</b>，切换时实时更新。</td></tr>
+    <tr><td>选择位置与生效</td><td>在"新建课堂"界面选择模型系列（FR-M5），默认沿用上一次使用的组合；本次课堂全程按所选组合计费，上课中不可切换。</td></tr>
+    <tr><td>API Key</td><td>硅基流动 API Key 在设置中配置，本地加密存储。</td></tr>
+  </table>
+
+  <h3>5.11 设置 <span class="badge b-p1">P1</span></h3>
+  <ul>
+    <li>课堂语言 / 日常语言切换</li>
+    <li>硅基流动 API Key 配置与连通性测试</li>
+    <li>QQ 邮箱 SMTP 配置（邮箱地址 + 授权码）与测试邮件</li>
+    <li>模型组合选择（含成本预览）</li>
+    <li>月度花费预算与超额提醒阈值（默认 80% / 100%）、定价表手动更新</li>
+    <li>开学日期（第一周周一）与节次时段配置（用于课程表周次与新建课堂预填）</li>
+    <li>归档保存路径</li>
+    <li>录音码率选择（32/64 kbps）</li>
+    <li>在位检测开关与频率（默认 10s）</li>
+  </ul>
+</section>
+
+<section id="shared">
+  <h2>6. 共享规则</h2>
+  <h3>6.1 通知渠道策略</h3>
+  <table>
+    <tr><th>在位状态</th><th>行动项提醒渠道</th></tr>
+    <tr><td>在位</td><td>桌面弹窗</td></tr>
+    <tr><td>不在位</td><td><b>桌面弹窗 + QQ 邮件（双通道同时触发）</b></td></tr>
+  </table>
+  <p>弹窗始终保留，同学中途回到座位可直接看到未处理提醒；邮件作为离开时的远程兜底。无论哪种渠道，行动项都会同时记录到课后任务清单。</p>
+
+  <h3>6.2 行动项类型与紧急度</h3>
+  <table>
+    <tr><th>类型</th><th>紧急度</th><th>处理方式</th></tr>
+    <tr><td>随堂测验</td><td>高</td><td>立即弹窗/邮件</td></tr>
+    <tr><td>课堂互动</td><td>高</td><td>立即弹窗/邮件</td></tr>
+    <tr><td>课堂任务</td><td>中</td><td>弹窗，可"稍后"</td></tr>
+    <tr><td>课后作业</td><td>低</td><td>静默记录到清单，归档时展示</td></tr>
+    <tr><td>项目提交</td><td>低</td><td>静默记录到清单</td></tr>
+  </table>
+
+  <h3>6.3 数据与隐私</h3>
+  <ul>
+    <li>字幕、录音、笔记存储在本地，不上传同桌自有服务器。</li>
+    <li>字幕与笔记内容会发送给硅基流动 API 用于翻译、检测、生成。同学需知悉其内容会经过第三方模型服务。</li>
+    <li>上传的 PPT 课件原件保存在本地；其文本/页面摘要（含图片型课件的 OCR 结果）会发送给硅基流动用于课堂归类与笔记生成，不做其他用途。</li>
+    <li>摄像头图像仅本地推理，不上传。</li>
+    <li>QQ 邮箱授权码本地加密存储，仅用于发送提醒邮件。</li>
+  </ul>
+</section>
+
+<section id="models">
+  <h2>7. 模型组合与成本</h2>
+  <p>所有模型通过<b>硅基流动 SiliconFlow</b> 调用。以下价格为 2026-10 公开定价（对话模型按 ¥/百万 Tokens，ASR 按 UTF-8 千字符或秒计费）。</p>
+
+  <h3>7.1 可用模型价格速查</h3>
+  <table>
+    <tr><th>用途</th><th>模型</th><th>输入</th><th>输出</th><th>缓存</th><th>备注</th></tr>
+    <tr><td rowspan="2">ASR 转写</td><td>XingChenASR V3.2-Ultra</td><td colspan="3"><b>免费</b></td><td>星辰，免费不限量</td></tr>
+    <tr><td>Qwen3-ASR-1.7B</td><td colspan="3">¥0.00022 / 秒</td><td>更高准确率，1 小时 ≈ ¥0.79</td></tr>
+    <tr><td rowspan="5">对话（翻译/检测/笔记）</td><td>Xing4.0-29B</td><td>免费</td><td>免费</td><td>—</td><td>免费模型，有速率限制</td></tr>
+    <tr><td>Qwen3.5-35B-A3B</td><td>¥0.40</td><td>¥3.20</td><td>—</td><td>高性价比</td></tr>
+    <tr><td>GLM-4.5-Air</td><td>¥1.00</td><td>¥6.00</td><td>—</td><td>翻译质量好</td></tr>
+    <tr><td>DeepSeek-V3.2</td><td>¥4.00</td><td>¥6.00</td><td>¥0.40</td><td>综合能力强，支持缓存</td></tr>
+    <tr><td>GLM-5.3</td><td>¥8.00</td><td>¥28.00</td><td>¥2.00</td><td>旗舰，笔记质量最佳</td></tr>
+  </table>
+
+  <h3>7.2 每小时 Token 消耗估算</h3>
+  <div class="assumption">
+    <b>估算前提：</b>1 小时英语课堂约 9000 词 ≈ 12,000 Tokens 字幕。翻译输入≈字幕量，输出≈字幕量。任务检测每 15s 调用一次（共 240 次），每次输入约 1 分钟字幕(200 Tokens)+系统提示(500 Tokens，可缓存)，输出仅在检测到行动项时产生。笔记生成输入≈全量字幕，输出≈3000 Tokens。
+  </div>
+  <table>
+    <tr><th>环节</th><th>输入(非缓存)</th><th>输入(缓存)</th><th>输出</th></tr>
+    <tr><td>字幕翻译</td><td>15,000</td><td>—</td><td>12,000</td></tr>
+    <tr><td>行动项检测(240次)</td><td>48,000</td><td>120,000</td><td>15,000</td></tr>
+    <tr><td>笔记生成</td><td>12,500</td><td>—</td><td>3,000</td></tr>
+    <tr><td><b>合计/小时</b></td><td><b>75,500</b></td><td><b>120,000</b></td><td><b>30,000</b></td></tr>
+  </table>
+
+  <h3>7.3 推荐组合</h3>
+  <div class="cost-card">
+    <div class="cost-item">
+      <div class="ctier">🥉 极致省钱</div>
+      <div class="cprice">¥0 <small>/ 小时</small></div>
+      <ul>
+        <li>ASR: XingChenASR V3.2-Ultra（免费）</li>
+        <li>翻译: Xing4.0-29B（免费）</li>
+        <li>检测: Xing4.0-29B（免费）</li>
+        <li>笔记: Xing4.0-29B（免费）</li>
+      </ul>
+      <p style="font-size:12px;color:var(--ink-mute);margin-top:8px;">⚠️ 免费模型有速率限制，高峰可能排队；翻译与检测准确率一般。</p>
+    </div>
+    <div class="cost-item">
+      <div class="ctier">🥈 经济版</div>
+      <div class="cprice">≈¥0.5 <small>/ 小时</small></div>
+      <ul>
+        <li>ASR: XingChenASR V3.2-Ultra（免费）</li>
+        <li>翻译: Qwen3.5-35B-A3B</li>
+        <li>检测: Qwen3.5-35B-A3B</li>
+        <li>笔记: Qwen3.5-35B-A3B</li>
+      </ul>
+      <p style="font-size:12px;color:var(--ink-mute);margin-top:8px;">性价比最高，日常听课足够。</p>
+    </div>
+    <div class="cost-item">
+      <div class="ctier">🥇 均衡版</div>
+      <div class="cprice">≈¥2.0 <small>/ 小时</small></div>
+      <ul>
+        <li>ASR: XingChenASR V3.2-Ultra（免费）</li>
+        <li>翻译: GLM-4.5-Air</li>
+        <li>检测: DeepSeek-V3.2（缓存降本）</li>
+        <li>笔记: DeepSeek-V3.2</li>
+      </ul>
+      <p style="font-size:12px;color:var(--ink-mute);margin-top:8px;">翻译流畅、检测准确，推荐默认组合。</p>
+    </div>
+    <div class="cost-item">
+      <div class="ctier">💎 高质量版</div>
+      <div class="cprice">≈¥6.5 <small>/ 小时</small></div>
+      <ul>
+        <li>ASR: Qwen3-ASR-1.7B（更准）</li>
+        <li>翻译: DeepSeek-V3.2</li>
+        <li>检测: DeepSeek-V3.2</li>
+        <li>笔记: GLM-5.3（旗舰）</li>
+      </ul>
+      <p style="font-size:12px;color:var(--ink-mute);margin-top:8px;">专业课程/重要讲座首选，笔记质量最佳。</p>
+    </div>
+  </div>
+
+  <div class="assumption">
+    <b>成本说明：</b>以上为估算值，实际花费取决于课堂语速、行动项密度、缓存命中率。同桌将在每节课结束后显示<b>本节课实际花费</b>，并在<b>花费管理页（5.9）</b>按时间、课程、模型系列、模型、功能环节等多维度汇总，支持月度预算与明细导出；所有数字均为按本地定价表的估算，以硅基流动实际账单为准。
+  </div>
+</section>
+
+<section id="arch">
+  <h2>8. 技术架构与技术栈</h2>
+  <p>平台策略：<b>首期仅 Windows 10 / 11</b>，优先把 WASAPI 系统音频、本地摄像头推理、低码率录音三条核心链路做稳；架构上保持平台边界收敛在 Rust 侧，为 P1 评估 macOS 留余地。</p>
+
+  <h3>8.1 总体架构</h3>
+  <div class="card arch-card">
+    <div class="arch-layer">
+      <div class="al-name">表现层 · WebView2</div>
+      <div class="al-boxes">
+        <span>课程页 / 课程主页</span><span>周课程表</span><span>新建课堂</span>
+        <span>实时字幕窗口 / 行动项弹窗</span><span>课堂主页</span><span>花费管理</span><span>设置</span>
+      </div>
+    </div>
+    <div class="arch-arrow">Tauri IPC：Commands（请求/响应） + Events（字幕、音量、检测、进度等流式推送）</div>
+    <div class="arch-layer">
+      <div class="al-name">应用核心层 · Rust（Tauri 2）</div>
+      <div class="al-boxes">
+        <span>课堂编排与状态机</span><span>音频采集管线<br>（cpal / WASAPI）</span><span>编码落盘<br>（AAC ≤32kbps）</span>
+        <span>ASR / 翻译 / 检测 / 笔记客户端</span><span>摄像头在位检测<br>（ONNX 本地推理）</span>
+        <span>课件解析与归类</span><span>封面渲染</span><span>计费旁路</span><span>邮件提醒</span>
+      </div>
+    </div>
+    <div class="arch-layer data">
+      <div class="al-name">本地数据层</div>
+      <div class="al-boxes">
+        <span>SQLite：课程 / 课堂 / 用量明细 / 配置</span>
+        <span>文件系统：录音 · 课件 · 封面 · 双语文本 · 笔记（~/Documents/同桌/）</span>
+        <span>Windows 凭据管理器：API Key、SMTP 授权码（DPAPI 加密）</span>
+      </div>
+    </div>
+    <div class="arch-layer ext">
+      <div class="al-name">外部服务</div>
+      <div class="al-boxes">
+        <span>硅基流动 SiliconFlow：ASR · 对话（翻译/检测/笔记）· 多模态（课件 OCR）</span>
+        <span>QQ 邮箱 SMTP（smtp.qq.com:465 SSL）</span>
+      </div>
+    </div>
+  </div>
+
+  <h3>8.2 技术选型清单</h3>
+  <table>
+    <tr><th>层</th><th>模块</th><th>选型</th><th>理由 / 关键说明</th></tr>
+    <tr><td rowspan="2">桌面壳</td><td>桌面框架</td><td><b>Tauri 2.x</b>（Rust 核心 + 系统 WebView2）</td><td>安装包小、内存占用低；原生能力在 Rust 侧实现，适合常驻型桌面应用；Windows 上复用系统 WebView2（随 Edge 分发，安装包内置 bootstrapper 兜底）。</td></tr>
+    <tr><td>系统插件</td><td>tauri-plugin-notification / single-instance / autostart / updater / dialog / fs</td><td>桌面通知、单实例运行、开机自启、增量更新、文件选择与沙箱化读写均用官方插件，不自造。</td></tr>
+    <tr><td rowspan="5">前端</td><td>框架/语言</td><td><b>Vue 3 + TypeScript + Vite</b></td><td>组件化承载多页面（课程/课表/花费/设置）；TS 保证 IPC 消息与数据模型类型安全。</td></tr>
+    <tr><td>状态与路由</td><td>Pinia + Vue Router</td><td>课堂会话、字幕流、设置等全局状态集中管理。</td></tr>
+    <tr><td>UI 组件</td><td><b>Naive UI</b>（主题变量定制）+ 少量自研组件</td><td>简约现代、暗色字幕窗口与主题定制方便，契合"不打扰"的视觉原则。</td></tr>
+    <tr><td>图表/回放</td><td><b>ECharts</b>（花费多维图表）、<b>WaveSurfer.js</b>（录音回放与波形）、Canvas（实时音量条/封面渲染）</td><td>花费管理的趋势/占比/下钻用 ECharts；课堂主页录音回放用 WaveSurfer。</td></tr>
+    <tr><td>样式</td><td>CSS Variables + 原生 CSS（沿用 PRD 设计 Token）</td><td>不引入重型 CSS 框架，保持单一主色与留白体系。</td></tr>
+    <tr><td rowspan="3">音频</td><td>采集</td><td><b>cpal</b>（Windows 走 WASAPI）：网课模式用 loopback 捕获系统输出，线下课模式采集默认/选定麦克风</td><td>WASAPI loopback 无需虚拟声卡；设备枚举与蓝牙耳机兼容在预研期验证（Q7）。</td></tr>
+    <tr><td>编码录音</td><td>PCM 分两路：一路送 ASR；一路经内置 <b>FFmpeg（sidecar，LGPL 动态链接）</b>编码为 <b>AAC 单声道 ≤32 kbps</b>（.m4a）</td><td>体积与原 PRD 估算一致（1h≈14MB）；FFmpeg 作为独立随包二进制，许可合规且便于替换。</td></tr>
+    <tr><td>实时传输</td><td>音频分片（5–10s，WAV/Opus）→ 硅基流动 ASR；对话类走 OpenAI 兼容 <b>SSE 流式</b></td><td>Rust 侧用 reqwest + tokio-stream 消费 SSE，经 Tauri Event 推给字幕窗口。</td></tr>
+    <tr><td rowspan="2">摄像头 / 本地 AI</td><td>取帧</td><td><b>nokhwa</b> 调用默认摄像头，每 10s 取 1 帧（可配置）</td><td>低频取帧，CPU/隐私开销小；帧图像用完即弃、不落盘。</td></tr>
+    <tr><td>人脸检测</td><td><b>ONNX Runtime（ort crate）</b> + 轻量人脸检测模型（SCRFD-2.5G 或 YOLOv8n-face 级）</td><td>纯本地推理、无联网、CPU 可跑（必要时可用核显 GPU EP）；连续 2 帧（约 20s）判定在位/不在位。</td></tr>
+    <tr><td rowspan="3">课件</td><td>PPTX 解析</td><td>Rust 自写解析：unzip（zip crate）+ <b>quick-xml</b> 提取每页标题/正文/备注</td><td>.pptx 即 OOXML zip，无需安装 Office；.ppt 旧格式先引导另存为 .pptx/.pdf。</td></tr>
+    <tr><td>PDF 解析</td><td><b>pdfium-render</b>（随包 PDFium 二进制）：抽文本 + 页面光栅化缩略图</td><td>课堂主页预览、批量归类的前几页摘要都从这里出。</td></tr>
+    <tr><td>图片型/OCR 与归类</td><td>页面图像送硅基流动多模态模型 OCR；归类用一次批量对话调用输出 <code>{课堂, 置信度, 理由}</code></td><td>避免逐文件调用，保证一致性与成本（FR-M7）。</td></tr>
+    <tr><td rowspan="2">数据</td><td>本地数据库</td><td><b>SQLite</b> + <b>sqlx</b>（离线模式、编译期校验 SQL）</td><td>表：courses / sessions / materials / usage_records（用量明细）/ settings；迁移用 sqlx migrate。</td></tr>
+    <tr><td>文件与密钥</td><td><b>dirs</b> 定位 Documents；<b>keyring</b> crate 写 Windows 凭据管理器（DPAPI）</td><td>录音/课件/封面按课程目录归档；API Key、SMTP 授权码不明文存库。</td></tr>
+    <tr><td>通知/邮件</td><td>SMTP</td><td><b>lettre</b>（rustls，SMTPS 465）+ tauri-plugin-notification</td><td>不在位时双通道并行：系统通知弹窗 + QQ 邮件。</td></tr>
+    <tr><td>封面</td><td>模板渲染</td><td>前端用 <b>Canvas / SVG 模板</b>按课程配色绘制 640×360，经 IPC 存为 cover.png（备选 Rust 侧 tiny-skia 无头渲染）</td><td>零成本、即时、小尺寸文字清晰（FR-M6）。</td></tr>
+    <tr><td rowspan="3">工程化</td><td>异步运行时/日志</td><td>tokio；<b>tracing + tracing-appender</b> 按天滚动日志</td><td>采集、网络、推理均异步；计费等旁路失败只记日志、不阻断上课。</td></tr>
+    <tr><td>测试</td><td>Rust：cargo test（管线/计费/归类解析单测）；前端：Vitest + Vue Test Utils；端到端：Playwright（WebView 关键路径）</td><td>计费聚合口径用单测锁定"总花费=明细求和"，防止汇总与明细不一致。</td></tr>
+    <tr><td>打包分发</td><td>Tauri Bundler：<b>NSIS 安装包（主） + MSI</b>，x64/ARM64 双架构评估；代码签名证书（发布前）</td><td>FFmpeg / PDFium / ONNX 模型随包或首启校验下载；WebView2 bootstrapper 内嵌。</td></tr>
+  </table>
+
+  <h3>8.3 关键运行管线</h3>
+  <h4>① 音频双路管线</h4>
+  <div class="card"><div class="flow">
+    <span class="node">cpal 采集 PCM</span><span class="arrow">→</span>
+    <span class="node">分片 5–10s</span><span class="arrow">→</span>
+    <span class="node">ASR（硅基流动）</span><span class="arrow">→</span>
+    <span class="node">SSE 翻译</span><span class="arrow">→</span>
+    <span class="node">字幕窗口（Event 推送）</span>
+  </div>
+  <div class="flow" style="margin-top:8px;">
+    <span class="node">同一 PCM 流</span><span class="arrow">→</span>
+    <span class="node">FFmpeg AAC 32kbps</span><span class="arrow">→</span>
+    <span class="node">课堂目录 .m4a</span>
+  </div></div>
+  <h4>② 行动项 + 在位 + 计费</h4>
+  <div class="card"><div class="flow">
+    <span class="node">滚动 1 分钟字幕</span><span class="arrow">→</span>
+    <span class="node">每 15s 检测调用</span><span class="arrow">→</span>
+    <span class="node">有行动项？</span><span class="arrow">→</span>
+    <span class="node">系统弹窗（始终）</span><span class="arrow">＋</span>
+    <span class="node">不在位则 QQ 邮件</span>
+  </div>
+  <div class="flow" style="margin-top:8px;">
+    <span class="node">每 10s 摄像头帧</span><span class="arrow">→</span>
+    <span class="node">ONNX 本地推理</span><span class="arrow">→</span>
+    <span class="node">在位状态机（连续 2 帧）</span>
+    <span class="arrow" style="margin-left:12px;">｜</span>
+    <span class="node">每次模型调用</span><span class="arrow">→</span>
+    <span class="node">旁路异步写 usage_records</span><span class="arrow">→</span>
+    <span class="node">花费页实时聚合</span>
+  </div></div>
+
+  <h3>8.4 外部二进制与许可</h3>
+  <table>
+    <tr><th>依赖</th><th>用途</th><th>许可/合规</th></tr>
+    <tr><td>FFmpeg（sidecar）</td><td>AAC 录音编码</td><td>LGPL 2.1+：动态链接/独立可执行、保留许可声明、提供源码获取方式；不静态链接进主程序。</td></tr>
+    <tr><td>PDFium</td><td>PDF 文本与缩略图</td><td>BSD 3-Clause，随包包含许可声明。</td></tr>
+    <tr><td>ONNX Runtime</td><td>本地人脸检测推理</td><td>MIT；人脸检测模型需确认可再分发许可（优先选 Apache/MIT 的 SCRFD 类模型）。</td></tr>
+    <tr><td>WebView2 Runtime</td><td>前端渲染</td><td>微软随 Windows / Edge 分发，安装包内置 bootstrapper 兜底。</td></tr>
+  </table>
+</section>
+
+<section id="open">
+  <h2>9. 开放问题</h2>
+  <table>
+    <tr><th>#</th><th>问题</th><th>影响</th><th>当前处理</th></tr>
+    <tr><td>Q1</td><td>线下课模式下，教室嘈杂环境的 ASR 准确率如何保障？</td><td>影响字幕质量</td><td><span class="tbd">[TBD]</span> 可在设置中切换更强的 ASR（Qwen3-ASR）或增加降噪</td></tr>
+    <tr><td>Q2</td><td>行动项"答案"由模型生成，可能出错，是否需要免责声明？</td><td>合规与信任</td><td>弹窗标注"AI 生成答案，请自行核对"</td></tr>
+    <tr><td>Q3</td><td>QQ 邮箱 SMTP 授权码获取门槛较高，是否支持其他邮箱？</td><td>可用性</td><td><span class="tbd">[TBD]</span> P1 扩展 Gmail/Outlook</td></tr>
+    <tr><td>Q4</td><td><s>网课模式是否需要同时捕获摄像头画面（如老师板书）？</s></td><td>已决策</td><td>✅ <b>不做摄像头/屏幕画面捕获</b>：老师基本照 PPT 讲授，改为支持课件上传（新建课堂/课堂主页单传、课程主页批量传 + 大模型归类），绑定后用"字幕 + PPT"重新生成笔记（见 5.8）</td></tr>
+    <tr><td>Q5</td><td>硅基流动免费模型的速率限制具体值？</td><td>省钱版可用性</td><td><span class="tbd">[TBD]</span> 需查官方文档确认 RPM/TPM</td></tr>
+    <tr><td>Q6</td><td>课堂封面是否需要 AI 风格化生成（学科插画/图标）？</td><td>观感与成本</td><td>首期采用本地模板渲染（课程色块 + 文字），保证小尺寸清晰与零成本；P1 再评估 AI 封面</td></tr>
+    <tr><td>Q7</td><td>Windows 网课模式经 WASAPI loopback 捕获系统音频，不同声卡/蓝牙耳机的兼容性与延迟如何？</td><td>网课模式可用性</td><td><span class="tbd">[TBD]</span> 技术预研阶段在多台 Windows 10/11 设备验证，必要时提供设备手动选择</td></tr>
+    <tr><td>Q8</td><td>硅基流动定价调整后，本地定价表如何同步？估算花费与官方账单出现差异如何处理？</td><td>花费统计准确性</td><td>首期手动更新定价表 + 历史记录保留当时单价；P1 评估启动时自动拉取官方价格、并提供"按账单 CSV 对账"入口</td></tr>
+    <tr><td>Q9</td><td>XingChenASR 的实时接入形态（分片轮询 vs WebSocket/流式协议）、单连接时长与并发限制如何？</td><td>字幕延迟目标（原文 ≤3s）</td><td><span class="tbd">[TBD]</span> 技术预研阶段对照硅基流动最新 ASR 文档验证；若免费模型不支持流式，则采用 5–10s 分片上传并在选型表中切换为 Qwen3-ASR 实时方案</td></tr>
+  </table>
+</section>
+
+<div class="footer">
+  同桌 · 产品需求文档 v1.1 · 更新于 2026-10-14（新增课程管理 / 周课程表 / 新建课堂预填 / 课堂封面 / PPT 课件上传与 AI 归类、笔记重生成；多维度花费管理与月度预算；新增第 8 章技术架构与技术栈（Tauri 2 + Rust + Vue 3）；仅适配 Windows；在位检测 10s；不在位时弹窗+邮件双通道）
+</div>
+
+</div>
+
+<script>
+const cards = document.querySelectorAll('#modeGrid .mode-card');
+const hint = document.getElementById('modeHint');
+cards.forEach(c => c.addEventListener('click', () => {
+  cards.forEach(x => x.classList.remove('active'));
+  c.classList.add('active');
+  hint.textContent = '已选：' + (c.dataset.mode === 'online' ? '网课模式' : '线下课模式');
+}));
+function startDemo() {
+  const active = document.querySelector('#modeGrid .mode-card.active');
+  const seg = document.querySelector('#modelSeg .seg-item.active');
+  alert('开始课程：' + (active.dataset.mode === 'online' ? '网课模式' : '线下课模式')
+    + '\n模型系列：' + (seg ? seg.dataset.tier : '') + '\n（演示用）');
+}
+function openClassDemo() {
+  alert('进入课堂主页：\n封面、录音回放、双语文本、课堂笔记、任务清单、实际花费\n（演示用）');
+}
+const segItems = document.querySelectorAll('#modelSeg .seg-item');
+const costHint = document.getElementById('costHint');
+segItems.forEach(s => s.addEventListener('click', () => {
+  segItems.forEach(x => x.classList.remove('active'));
+  s.classList.add('active');
+  costHint.textContent = s.dataset.tier + ' · ' + s.dataset.cost + ' / 小时';
+}));
+</script>
+</body>
+</html>

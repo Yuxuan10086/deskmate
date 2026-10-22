@@ -1,0 +1,3 @@
+# 编译加速：使用 sccache 缓存 rustc 产物（需 PATH 中有 sccache）
+[build]
+rustc-wrapper = "sccache"

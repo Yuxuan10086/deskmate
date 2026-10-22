@@ -1,0 +1,69 @@
+[package]
+name = "deskmate"
+version = "0.1.0"
+description = "A Tauri App"
+authors = ["you"]
+edition = "2024"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+# The `_lib` suffix may seem redundant but it is necessary
+# to make the lib name unique and wouldn't conflict with the bin name.
+# This seems to be only an issue on Windows, see https://github.com/rust-lang/cargo/issues/8519
+name = "deskmate_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+tauri-plugin-opener = "2"
+tauri-plugin-notification = "2"
+tauri-plugin-dialog = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+sqlx = { version = "0.8", features = ["sqlite", "runtime-tokio", "macros", "chrono"] }
+chrono = { version = "0.4", features = ["serde"] }
+dirs = "5"
+thiserror = "2"
+once_cell = "1"
+zip = "2"
+quick-xml = { version = "0.37", features = ["serialize"] }
+base64 = "0.22"
+cpal = "0.15"
+wasapi = "0.25"
+reqwest = { version = "0.12", default-features = false, features = ["json", "stream", "multipart", "native-tls"] }
+lettre = { version = "0.11", default-features = false, features = ["builder", "hostname", "smtp-transport", "native-tls"] }
+windows-sys = { version = "0.60", features = ["Win32_Foundation", "Win32_Security_Cryptography"] }
+windows = { version = "0.62", features = [
+    "Win32_Foundation",
+    "Win32_Media_Audio",
+    "Win32_System_Com",
+    "Win32_System_Diagnostics_ToolHelp",
+    "Win32_System_Threading",
+    "Foundation_Collections",
+    "Graphics_Imaging",
+    "Media_Capture",
+    "Media_Capture_Frames",
+    "Media_FaceAnalysis",
+] }
+# WinRT 集合/异步接口（windows crate 不重导出泛型集合类型）
+windows-collections = "0.3"
+# WinRT 异步结果的安全等待（IAsyncOperation::join，替代非法阻塞的 GetResults）
+windows-future = "0.3"
+# AST 2.0 同声传译：WebSocket 流式客户端 + Protobuf 编解码
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "sync", "time"] }
+tokio-tungstenite = { version = "0.26", features = ["native-tls"] }
+futures-util = "0.3"
+prost = "0.13"
+
+
+# 打包速度优先：关闭全程序 LTO、放宽 codegen 并行度（体积略增，编译快数倍）
+[profile.release]
+codegen-units = 16
+lto = false
+opt-level = 2
+panic = "abort"
+strip = true
